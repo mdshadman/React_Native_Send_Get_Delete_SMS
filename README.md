@@ -1,0 +1,2 @@
+# React_Native_Send_Get_Delete_SMS
+In this tutorial, we are going to implement send, read and delete SMS facilities from your mobile device using react-native application. Using these implementations you can send message to someone, you can read a particular person or profiles message by clicking a single button and you can delete a particular message too from your device by implementing some cool functions using react-native-sms and react-native-get-sms-android
