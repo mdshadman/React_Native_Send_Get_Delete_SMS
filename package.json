@@ -8,8 +8,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "react": "16.8.6",
-    "react-native": "0.60.5",
+    "react": "16.9.0",
+    "react-native": "0.61.4",
     "react-native-get-sms-android": "^1.6.0",
     "react-native-sms": "^1.9.0"
   },
