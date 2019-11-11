@@ -153,11 +153,13 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+             manifestPlaceholders = [excludeSystemAlertWindowPermission: "false"]
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
             signingConfig signingConfigs.debug
+             manifestPlaceholders = [excludeSystemAlertWindowPermission: "false"]
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

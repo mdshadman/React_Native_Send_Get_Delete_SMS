@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Scan from './scan';
 import SendSMS from 'react-native-sms'
 import SmsAndroid from 'react-native-get-sms-android';
+import { PermissionsAndroid } from 'react-native';
+
 
 class SendSMSContainer extends Component {
     constructor(props) {
@@ -34,35 +36,14 @@ class SendSMSContainer extends Component {
 
     // Function to read particular message from inbox with id
     getSMS = () => {
-        let filter = {
-            box: 'inbox', // 'inbox' (default), 'sent', 'draft', 'outbox', 'failed', 'queued', and '' for all
-            // the next 4 filters should NOT be used together, they are OR-ed so pick one
-            read: 0, // 0 for unread SMS, 1 for SMS already read
-            _id: 1234, // specify the msg id
-            address: '+917691008701', // sender's phone number
-            body: 'How are you shadman', // content to match
-            // the next 2 filters can be used for pagination
-            indexFrom: 0, // start from index 0
-            maxCount: 10, // count of SMS to return each time
-        };
-        SmsAndroid.list(
-            JSON.stringify(filter),
-            (fail) => {
-                console.log('Failed with this error: ' + fail);
-            },
-            (count, smsList) => {
-                console.log('Count: ', count);
-                console.log('List: ', smsList);
-                var arr = JSON.parse(smsList);
-
-                arr.forEach(function (object) {
-                    console.log('Object: ' + object);
-                    console.log('-->' + object.date);
-                    console.log('-->' + object.body);
-                    alert('your message with selected id is --->' + object.body)
-                });
-            },
-        );
+        this.requestSMSReadPermission()
+        .then(function (didGetPermission: boolean) {
+            if (didGetPermission) {
+                return getSMSMessages();
+            } else {
+                alert("Oh no no permissions!")
+            }
+        });
     }
 
     // Function to delete particular message from inbox with id
@@ -88,6 +69,49 @@ class SendSMSContainer extends Component {
             />
         );
     }
+    async requestSMSReadPermission() {
+        const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_SMS,
+            {
+                title: 'Hey you need to give us SMS permissions!',
+                message: 'We need to read your SMS so we track links for you.'
+            }
+        )
+        return granted === PermissionsAndroid.RESULTS.GRANTED
+    }
+
+}
+
+
+function getSMSMessages () {
+    console.log('getmessage triggered')
+    let filter = {
+        box: 'inbox', // 'inbox' (default), 'sent', 'draft', 'outbox', 'failed', 'queued', and '' for all
+        // the next 4 filters should NOT be used together, they are OR-ed so pick one
+        read: 0, // 0 for unread SMS, 1 for SMS already read
+        body: 'How are you shadman', // content to match
+        // the next 2 filters can be used for pagination
+        indexFrom: 0, // start from index 0
+        maxCount: 10, // count of SMS to return each time
+    };
+    SmsAndroid.list(
+        JSON.stringify(filter),
+        (fail) => {
+            console.log('Failed with this error: ' + fail);
+        },
+        (count, smsList) => {
+            console.log('Count: ', count);
+            console.log('List: ', smsList);
+            var arr = JSON.parse(smsList);
+
+            arr.forEach(function (object) {
+                console.log('Object: ' + object);
+                console.log('-->' + object.date);
+                console.log('-->' + object.body);
+                alert('your message with selected id is --->' + object.body)
+            });
+        },
+    );
 }
 
 export default SendSMSContainer;
